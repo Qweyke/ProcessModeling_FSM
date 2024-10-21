@@ -48,7 +48,7 @@ std::string outputSignals[INPUT_SIGNALS][STATES]
 
 std::string inputSignals[INPUT_SIGNALS] = { INP_TCP_CONECT, INP_HTTP_RECVD, INP_HTTP_READY };
 
-std::string nextStatesText[STATES] = { ST_OPEN, ST_HANDLING, ST_SENDING, ST_IDLE };
+std::string nextStatesText[STATES] = { ST_IDLE, ST_HANDLING, ST_OPEN, ST_SENDING };
 
 
 void static displaySignals(std::string signals[], size_t size)
@@ -68,15 +68,18 @@ void static displaySignals(std::string signals[], size_t size)
     std::cout << output;
 }
 
+void static displayState(uint16_t state)
+{
+    std::cout << "Current state: " << state << " - " << nextStatesText[state] << "\n\n";
+}
+
 
 int main()
 {
     uint16_t currentState = 0;
     uint16_t inSignal     = 0;
 
-
-    std::cout << "Current state: " << currentState << " - " << nextStatesText[currentState]
-              << "\n\n";
+    displayState(currentState);
     displaySignals(inputSignals, INPUT_SIGNALS);
 
     while (1)
@@ -87,17 +90,12 @@ int main()
         if ((inSignal < INPUT_SIGNALS) && (inSignal >= 0))
         {
             std::cout << "Output signal: " << outputSignals[inSignal][currentState] << "\n";
-
             currentState = nextStates[inSignal][currentState];
-
-            std::cout << "Current state: " << currentState << " - " << nextStatesText[currentState]
-                      << std::endl
-                      << std::endl;
+            displayState(currentState);
         }
         else if (inSignal == INPUT_SIGNALS)
         {
-            std::cout << "Current state: " << currentState << " - " << nextStatesText[currentState]
-                      << "\n\n";
+            displayState(currentState);
             displaySignals(inputSignals, INPUT_SIGNALS);
         }
 
