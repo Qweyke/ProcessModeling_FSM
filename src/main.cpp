@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
-
+namespace
+{
 constexpr uint16_t STATES        = 4;
 constexpr uint16_t INPUT_SIGNALS = 3;
 
@@ -8,15 +9,15 @@ constexpr uint16_t INPUT_SIGNALS = 3;
 constexpr const char* TCP_OPENING            = "[TCP: Opening connection]";
 constexpr const char* TCP_CONNECTED          = "[TCP: Already connected]";
 constexpr const char* TCP_DISCONNECTED       = "[TCP: No connection]";
-constexpr const char* HTTP_REQ_RECEIVED      = "[HTTP: Request recieved, handling]";
+constexpr const char* HTTP_REQ_RECEIVED      = "[HTTP: Request received, handling]";
 constexpr const char* HTTP_NEXT_REQ_RECEIVED = "[HTTP: Next request received, setting in queue]";
 constexpr const char* HTTP_RESP_READY        = "[HTTP: Response ready, waiting sending to begin]";
 constexpr const char* HTTP_RESP_SEND_PREP    = "[HTTP: Request handled, preparing to send]";
 constexpr const char* HTTP_RESP_SENDING      = "[HTTP: Sending response]";
 
 // input signals display
-constexpr const char* INP_TCP_CONECT = "(TCP: Connection request)";
-constexpr const char* INP_HTTP_RECVD = "(HTTP: Request recieved)";
+constexpr const char* INP_TCP_CONECT = "(TCP: Connection request received)";
+constexpr const char* INP_HTTP_RECVD = "(HTTP: Request received)";
 constexpr const char* INP_HTTP_READY = "(HTTP: Response ready)";
 
 // states display
@@ -24,6 +25,7 @@ constexpr const char* ST_IDLE     = "{TCP: Waiting connection}";
 constexpr const char* ST_OPEN     = "{TCP: Connection opened}";
 constexpr const char* ST_HANDLING = "{HTTP: Handling request}";
 constexpr const char* ST_SENDING  = "{HTTP: Sending response}";
+}
 
 enum States
 {
@@ -92,23 +94,22 @@ int main()
                       << std::endl
                       << std::endl;
         }
-        else if (INPUT_SIGNALS)
+        else if (inSignal == INPUT_SIGNALS)
         {
             std::cout << "Current state: " << currentState << " - " << nextStatesText[currentState]
                       << "\n\n";
             displaySignals(inputSignals, INPUT_SIGNALS);
         }
 
-        else if (INPUT_SIGNALS + 1)
+        else if (inSignal == INPUT_SIGNALS + 1)
         {
             std::cout << "Exiting program \n\n";
-            return 0;
+            break;
         }
 
         else
         {
             std::cout << "Unknown input signal \n\n";
-            break;
         }
     }
     return 0;
