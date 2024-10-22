@@ -2,7 +2,7 @@
 #include <string>
 namespace
 {
-constexpr uint16_t STATES        = 4;
+constexpr uint16_t STATES        = 3;
 constexpr uint16_t INPUT_SIGNALS = 3;
 
 // output signals display
@@ -12,8 +12,7 @@ constexpr const char* TCP_DISCONNECTED       = "[TCP: No connection]";
 constexpr const char* HTTP_REQ_RECEIVED      = "[HTTP: Request received, handling]";
 constexpr const char* HTTP_NEXT_REQ_RECEIVED = "[HTTP: Next request received, setting in queue]";
 constexpr const char* HTTP_RESP_READY        = "[HTTP: Response ready, waiting sending to begin]";
-constexpr const char* HTTP_RESP_SEND_PREP    = "[HTTP: Request handled, preparing to send]";
-constexpr const char* HTTP_RESP_SENDING      = "[HTTP: Sending response]";
+constexpr const char* HTTP_RESP_SENDING      = "[HTTP: Response handled, sending response]";
 
 // input signals display
 constexpr const char* INP_TCP_CONECT = "(TCP: Connection request received)";
@@ -24,7 +23,6 @@ constexpr const char* INP_HTTP_READY = "(HTTP: Response ready)";
 constexpr const char* ST_IDLE     = "{TCP: Waiting connection}";
 constexpr const char* ST_OPEN     = "{TCP: Connection opened}";
 constexpr const char* ST_HANDLING = "{HTTP: Handling request}";
-constexpr const char* ST_SENDING  = "{HTTP: Sending response}";
 }
 
 enum States
@@ -32,23 +30,19 @@ enum States
     IDLE,
     OPEN,
     HANDLING,
-    SENDING
 };
 
-uint16_t nextStates[INPUT_SIGNALS][STATES] = {
-    { OPEN, OPEN, HANDLING, SENDING },
-    { IDLE, HANDLING, HANDLING, SENDING },
-    { IDLE, SENDING, SENDING, IDLE },
-};
+uint16_t nextStates[INPUT_SIGNALS][STATES]
+    = { { OPEN, OPEN, HANDLING }, { IDLE, HANDLING, HANDLING }, { IDLE, HANDLING, IDLE } };
 
 std::string outputSignals[INPUT_SIGNALS][STATES]
-    = { { TCP_OPENING, TCP_CONNECTED, TCP_CONNECTED, TCP_CONNECTED },
-        { TCP_DISCONNECTED, HTTP_REQ_RECEIVED, HTTP_NEXT_REQ_RECEIVED, HTTP_NEXT_REQ_RECEIVED },
-        { TCP_DISCONNECTED, HTTP_RESP_READY, HTTP_RESP_SEND_PREP, HTTP_RESP_SENDING } };
+    = { { TCP_OPENING, TCP_CONNECTED, TCP_CONNECTED },
+        { TCP_DISCONNECTED, HTTP_REQ_RECEIVED, HTTP_NEXT_REQ_RECEIVED },
+        { TCP_DISCONNECTED, HTTP_RESP_READY, HTTP_RESP_SENDING } };
 
 std::string inputSignals[INPUT_SIGNALS] = { INP_TCP_CONECT, INP_HTTP_RECVD, INP_HTTP_READY };
 
-std::string nextStatesText[STATES] = { ST_IDLE, ST_HANDLING, ST_OPEN, ST_SENDING };
+std::string nextStatesText[STATES] = { ST_IDLE, ST_OPEN, ST_HANDLING };
 
 
 void static displaySignals(std::string signals[], size_t size)
